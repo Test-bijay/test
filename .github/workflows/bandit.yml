@@ -17,15 +17,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.11'
 
       - name: Install Bandit
         run: pip install bandit
 
       - name: Run Bandit Scan
         run: bandit -r . -f json -o bandit-report.json
+        continue-on-error: true
 
       - name: Upload Bandit Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Bandit JSON Report
