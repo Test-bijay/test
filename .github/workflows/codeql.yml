@@ -6,12 +6,12 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    - cron: '45 8 * * *'  # Daily at 2:30 PM NPT
+    - cron: '45 8 * * *'
 
 permissions:
   actions: read
   contents: read
-  security-events: write  # 🔑 This is required for uploading CodeQL results
+  security-events: write 
 
 jobs:
   analyze:
