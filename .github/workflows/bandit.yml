@@ -24,9 +24,32 @@ jobs:
       - name: Run Bandit Scan (exit zero)
         run: bandit -r . -f json -o bandit-report.json --exit-zero
 
-      - name: Check for High Severity Issues
+      - name: Create Bandit High Severity Checker Script
         run: |
-          python check_bandit_high_severity.py bandit-report.json
+          cat << 'EOF' > check_bandit_high_severity.py
+          import json
+          import sys
+
+          report_path = sys.argv[1]
+
+          with open(report_path) as f:
+              data = json.load(f)
+
+          issues = data.get("results", [])
+          high_severity = [i for i in issues if i.get("issue_severity") == "HIGH"]
+
+          if high_severity:
+              print(f"Found {len(high_severity)} HIGH severity issue(s):")
+              for issue in high_severity:
+                  print(f"- {issue.get('filename')}:{issue.get('line_number')} -> {issue.get('issue_text')}")
+              sys.exit(1)
+          else:
+              print("✅ No HIGH severity issues found.")
+              sys.exit(0)
+          EOF
+
+      - name: Check for High Severity Issues
+        run: python check_bandit_high_severity.py bandit-report.json
 
       - name: Upload Bandit Report
         if: always()
