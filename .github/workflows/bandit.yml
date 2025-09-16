@@ -7,7 +7,6 @@ on:
 
 jobs:
   bandit_scan:
-    name: Run Bandit Security Scanner
     runs-on: windows-latest
 
     steps:
@@ -22,9 +21,12 @@ jobs:
       - name: Install Bandit
         run: pip install bandit
 
-      - name: Run Bandit Scan
-        run: bandit -r . -f json -o bandit-report.json
-        continue-on-error: true
+      - name: Run Bandit Scan (exit zero)
+        run: bandit -r . -f json -o bandit-report.json --exit-zero
+
+      - name: Check for High Severity Issues
+        run: |
+          python check_bandit_high_severity.py bandit-report.json
 
       - name: Upload Bandit Report
         if: always()
@@ -32,8 +34,3 @@ jobs:
         with:
           name: Bandit JSON Report
           path: bandit-report.json
-
-      - name: Show Bandit Report Summary
-        run: |
-          echo "=== Bandit Results ==="
-          bandit -r . -lll
