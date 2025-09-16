@@ -21,8 +21,10 @@ jobs:
       - name: Install Bandit
         run: pip install bandit
 
-      - name: Run Bandit Scan (exit zero)
-        run: bandit -r . -f json -o bandit-report.json --exit-zero
+      - name: Run Bandit Scan (generate JSON and HTML, always exit 0)
+        run: |
+          bandit -r . -f json -o bandit-report.json --exit-zero
+          bandit -r . -f html -o bandit-report.html --exit-zero
 
       - name: Create Bandit High Severity Checker Script
         shell: pwsh
@@ -54,9 +56,11 @@ jobs:
         shell: pwsh
         run: python check_bandit_high_severity.py bandit-report.json
 
-      - name: Upload Bandit Report
+      - name: Upload Bandit Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Bandit JSON Report
-          path: bandit-report.json
+          name: Bandit Reports
+          path: |
+            bandit-report.json
+            bandit-report.html
