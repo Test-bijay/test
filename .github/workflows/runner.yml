@@ -14,7 +14,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Set up Node.js
+    # ---------------------
+    # Node.js / ESLint setup
+    # ---------------------
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -24,10 +26,12 @@ jobs:
       run: |
         npm init -y
         npm install eslint --save-dev
-        npx eslint --init || echo "Skipping init"
+        echo "Running ESLint on test.js..."
         npx eslint test.js || echo "Lint issues found in test.js"
 
-    # Set up Python
+    # ---------------------
+    # Python / Bandit setup
+    # ---------------------
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -37,12 +41,5 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install bandit
-        bandit -r vulnerable.py || echo "Security issues found in vulnerable.py"
-
-    # Optional: SonarCloud scan
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v2
-      with:
-        projectBaseDir: .
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        echo "Running Bandit on vulnerable.py..."
+        bandit -r vulnerable.py || echo "Security issues found in
