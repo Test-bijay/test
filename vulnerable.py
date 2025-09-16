@@ -10,10 +10,6 @@ def run_command(user_input):
 def evaluate_expression(expr):
     return eval(expr)
 
-# Vulnerability 3: Insecure Deserialization
-def load_data(pickled_data):
-    return pickle.loads(pickled_data)
-
 # Vulnerability 4: Hardcoded Credentials
 def connect_to_db():
     username = "admin"
