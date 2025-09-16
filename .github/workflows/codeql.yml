@@ -2,12 +2,16 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ master ]
+    branches: [ main ]
   schedule:
-    - cron:  '45 8 * * *'
+    - cron: '45 8 * * *'  # Daily at 2:30 PM NPT
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write  # 🔑 This is required for uploading CodeQL results
 
 jobs:
   analyze:
@@ -16,16 +20,16 @@ jobs:
 
     strategy:
       matrix:
-        language: ['javascript', 'python']  # Set languages you want to scan
+        language: ['javascript']
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
