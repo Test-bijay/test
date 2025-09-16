@@ -1,4 +1,4 @@
-name: "Security Scan - Bandit"
+name: "Security Scan - Bandit (Windows)"
 
 on:
   push:
@@ -25,8 +25,9 @@ jobs:
         run: bandit -r . -f json -o bandit-report.json --exit-zero
 
       - name: Create Bandit High Severity Checker Script
+        shell: pwsh
         run: |
-          cat << 'EOF' > check_bandit_high_severity.py
+          $script = @"
           import json
           import sys
 
@@ -46,9 +47,11 @@ jobs:
           else:
               print("✅ No HIGH severity issues found.")
               sys.exit(0)
-          EOF
+          "@
+          $script | Out-File -Encoding utf8 check_bandit_high_severity.py
 
       - name: Check for High Severity Issues
+        shell: pwsh
         run: python check_bandit_high_severity.py bandit-report.json
 
       - name: Upload Bandit Report
