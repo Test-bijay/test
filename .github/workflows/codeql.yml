@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   schedule:
     - cron: '45 8 * * *'  # Daily at 2:30 PM NPT
 
@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        language: ['javascript']
+        language: ['javascript','python']
 
     steps:
       - name: Checkout repository
