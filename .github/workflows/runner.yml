@@ -1,4 +1,4 @@
-name: Run Code on Windows
+name: Run JS and Python Analysis on Windows
 
 on:
   push:
@@ -7,23 +7,42 @@ on:
     branches: [ master ]
 
 jobs:
-  run-code:
+  analyze:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'  # Change to your desired version
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if exist requirements.txt pip install -r requirements.txt
+    - name: Install ESLint and run analysis
+      run: |
+        npm init -y
+        npm install eslint --save-dev
+        npx eslint --init || echo "Skipping init"
+        npx eslint test.js || echo "Lint issues found in test.js"
 
-      - name: Run the code
-        run: |
-          python vulnerable.py
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Bandit and run analysis
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit
+        bandit -r vulnerable.py || echo "Security issues found in vulnerable.py"
+
+    # Optional: SonarCloud scan
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      with:
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
