@@ -20,4 +20,4 @@ jobs:
           python-version: "3.x"
 
       - name: Run custom penTest.html scanner
-        run: python scan_penTest.py
+        run: python scan_Pen.py
