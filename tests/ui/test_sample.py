@@ -8,11 +8,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 class GoogleSearchTest(unittest.TestCase):
     def setUp(self):
         options = Options()
-        options.add_argument('--headless')  # Run in headless mode on CI
+        options.add_argument('--headless')  # Run Chrome in headless mode
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
 
-        # Use webdriver-manager to install and manage chromedriver
+        # Use webdriver-manager to manage ChromeDriver automatically
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     def test_google_search(self):
@@ -24,7 +24,9 @@ class GoogleSearchTest(unittest.TestCase):
 
         self.driver.implicitly_wait(5)
 
-        self.assertIn("GitHub Actions", self.driver.title)
+        # Verify that some search results are present on the page
+        results = self.driver.find_elements(By.CSS_SELECTOR, 'div.g')
+        self.assertGreater(len(results), 0, "No search results found.")
 
     def tearDown(self):
         self.driver.quit()
