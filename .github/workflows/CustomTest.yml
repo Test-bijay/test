@@ -1,0 +1,23 @@
+name: Custom Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  scan_penTest:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Run custom penTest.html scanner
+        run: python scan_penTest.py
